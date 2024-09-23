@@ -5,12 +5,9 @@ import { v4 as uuidv4 } from "uuid";
 import React, { useEffect, useReducer, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import { addTask } from "../lib/features/taskBoard/boardSlice";
+import { useAppDispatch } from "../lib/hooks";
 
-type AddTaskFormProps = {
-  onShowAddTask: () => void;
-};
-
-export const AddTaskForm = ({ onShowAddTask }: AddTaskFormProps) => {
+export const AddTaskForm = () => {
   const [content, setContent] = useState([
     { id: uuidv4(), content: "e.g. Make a coffee", pending: true },
     { id: uuidv4(), content: "e.g. Drink coffee & smile", pending: true },
@@ -18,6 +15,7 @@ export const AddTaskForm = ({ onShowAddTask }: AddTaskFormProps) => {
   const subtasksRef = useRef([]);
   const searchParam = usePathname();
   const boardId = Number(searchParam.split("").slice(-1));
+  const dispatch = useAppDispatch();
   // console.log(boardId);
 
   function handleAddContent(e: React.FormEvent<HTMLFormElement>) {
@@ -67,11 +65,11 @@ export const AddTaskForm = ({ onShowAddTask }: AddTaskFormProps) => {
       },
     };
     console.log(newTask);
-    addTask(newTask);
-    onShowAddTask();
+
+    dispatch(addTask(newTask));
   }
   return (
-    <div className="absolute top-8 left-2/4 bg-white w-[420px] p-6 rounded-md z-10">
+    <div className="absolute top-8 left-2/4 bg-white w-[420px] p-6 rounded-md z-20">
       <h2 className="font-bold mb-4">Add New Task</h2>
       <form className="flex flex-col gap-6" onSubmit={handleSubmit}>
         <div>

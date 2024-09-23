@@ -4,7 +4,7 @@ import { RootState } from "../../store";
 interface SubTask {
   id: number;
   name: string;
-  pending: boolean;
+  isCompleted: boolean;
 }
 
 interface Task {
@@ -23,6 +23,7 @@ interface BoardColumn {
 interface Board {
   id: number;
   name: string;
+  isActive: boolean;
   columns: BoardColumn[];
 }
 
@@ -34,6 +35,7 @@ const initialState: Boards = {
     {
       id: 1,
       name: "Platform Launch",
+      isActive: false,
       columns: [
         {
           id: 1,
@@ -47,7 +49,7 @@ const initialState: Boards = {
                 {
                   id: 1,
                   name: "sign up",
-                  pending: true,
+                  isCompleted: true,
                 },
               ],
             },
@@ -59,7 +61,7 @@ const initialState: Boards = {
                 {
                   id: 1,
                   name: "Search page",
-                  pending: false,
+                  isCompleted: false,
                 },
               ],
             },
@@ -77,7 +79,7 @@ const initialState: Boards = {
                 {
                   id: 1,
                   name: "sign up",
-                  pending: true,
+                  isCompleted: true,
                 },
               ],
             },
@@ -95,7 +97,7 @@ const initialState: Boards = {
                 {
                   id: 1,
                   name: "sign up",
-                  pending: true,
+                  isCompleted: true,
                 },
               ],
             },

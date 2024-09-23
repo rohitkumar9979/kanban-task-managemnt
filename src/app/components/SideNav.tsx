@@ -8,6 +8,7 @@ import Link from "next/link";
 export const SideNav = () => {
   const [isOpen, setIsOpen] = useState(false);
   const boards = useAppSelector(selectAllBoards);
+
   return (
     <section
       className={` border-cyan-800 h-screen bg-white ${
@@ -30,7 +31,7 @@ export const SideNav = () => {
         </div>
         <div className="flex items-center gap-2 hover:bg-gray-200 w-[240px] p-4 rounded-tr-3xl rounded-br-3xl">
           <Image
-            src="icon-hide-sidebar.svg"
+            src="/icon-hide-sidebar.svg"
             alt="hide-sidebar icon"
             width={16}
             height={16}
