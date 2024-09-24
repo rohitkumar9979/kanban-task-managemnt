@@ -1,35 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { RootState } from "../../store";
+import { Boards } from "../../types";
 
-interface SubTask {
-  id: number;
-  name: string;
-  isCompleted: boolean;
-}
-
-interface Task {
-  id: number;
-  title: string;
-  description: string;
-  subtasks: SubTask[];
-}
-
-interface BoardColumn {
-  id: number;
-  name: string;
-  tasks: Task[];
-}
-
-interface Board {
-  id: number;
-  name: string;
-  isActive: boolean;
-  columns: BoardColumn[];
-}
-
-interface Boards {
-  boards: Board[];
-}
 const initialState: Boards = {
   boards: [
     {
@@ -72,7 +44,7 @@ const initialState: Boards = {
           name: "Doing",
           tasks: [
             {
-              id: 1,
+              id: 3,
               title: "Writing test cases",
               description: "",
               subtasks: [
@@ -90,7 +62,7 @@ const initialState: Boards = {
           name: "Done",
           tasks: [
             {
-              id: 1,
+              id: 4,
               title: "Debugging add to cart",
               description: "",
               subtasks: [
@@ -136,5 +108,16 @@ export default boardSlice.reducer;
 export const selectAllBoards = (state: RootState) => state.board.boards;
 export const selectBoardById = (state: RootState, boardId: number) =>
   state.board.boards.find((board) => board.id === boardId);
+/*
+export const selectColumnById = (state: RootState,boardId: number, columnId: number) => {
+  const board = selectBoardById(state,boardId);
+  return board?.columns.find(col => col.id === columnId);
+};
 
+export const selectSubTasksById = (state: RootState, boardId: number,taskId: number,columnId: number){
+  const board = selectBoardById(state,boardId);
+  const column = selectColumnById(state,boardId,columnId)
+  return column?.tasks.find(task => task.id === taskId);
+}
+*/
 export const { addTask } = boardSlice.actions;

@@ -43,6 +43,14 @@ export const SideNav = () => {
           >
             Hide Sidebar
           </button>
+          <div className="w-64">
+            <Image
+              src="/icon-show-sidebar.svg"
+              alt="show sidebar icon"
+              width={16}
+              height={16}
+            />
+          </div>
         </div>
       </div>
       <div className="absolute bottom-5 rounded-tr-3xl rounded-br-3xl">
