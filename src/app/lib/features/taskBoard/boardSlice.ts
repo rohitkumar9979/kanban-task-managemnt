@@ -100,6 +100,39 @@ const boardSlice = createSlice({
     addBoard(state, action) {
       state.boards.push(action.payload);
     },
+    removeTask(state, action) {
+      const { boardId, existingColName, existingTask } = action.payload;
+      // console.log("existing col name: ", existingColName);
+      // console.log("selected option: ", moveToCol);
+
+      // Find the board by boardId
+      const board = state.boards.find((board) => board.id === boardId);
+
+      if (board) {
+        // Find the column by column name
+        const col = board.columns.find((col) => col.name === existingColName);
+        if (col) {
+          // removing task from existing col
+          col.tasks = col.tasks.filter((task) => task.id !== existingTask.id);
+        } else {
+          console.log("column not found");
+        }
+      } else {
+        console.log(`board Id doesn't exist `, boardId);
+      }
+    },
+    moveTask(state, action) {
+      const {
+        boardId,
+        selectedOption: moveToCol,
+        existingTask,
+      } = action.payload;
+
+      const board = state.boards.find((board) => board.id === boardId);
+      // moving task to new col
+      const newCol = board?.columns.find((col) => col.name === moveToCol);
+      newCol?.tasks.push(existingTask);
+    },
   },
 });
 
@@ -110,16 +143,5 @@ export const selectBoardById = (state: RootState, boardId: string) => {
   // console.log("Boardid passed to store: ", boardId);
   return state.board.boards.find((board) => board.id === boardId);
 };
-/*
-export const selectColumnById = (state: RootState,boardId: number, columnId: number) => {
-  const board = selectBoardById(state,boardId);
-  return board?.columns.find(col => col.id === columnId);
-};
 
-export const selectSubTasksById = (state: RootState, boardId: number,taskId: number,columnId: number){
-  const board = selectBoardById(state,boardId);
-  const column = selectColumnById(state,boardId,columnId)
-  return column?.tasks.find(task => task.id === taskId);
-}
-*/
-export const { addTask, addBoard } = boardSlice.actions;
+export const { addTask, addBoard, removeTask, moveTask } = boardSlice.actions;

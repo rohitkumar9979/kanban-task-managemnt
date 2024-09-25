@@ -1,9 +1,13 @@
-import React from "react";
+import React, { useState } from "react";
 import Image from "next/image";
 import { SubTask } from "../lib/types";
 import { usePathname } from "next/navigation";
-import { useAppSelector } from "../lib/hooks";
-import { selectBoardById } from "../lib/features/taskBoard/boardSlice";
+import { useAppDispatch, useAppSelector } from "../lib/hooks";
+import {
+  moveTask,
+  removeTask,
+  selectBoardById,
+} from "../lib/features/taskBoard/boardSlice";
 
 type SubTaskFormProps = {
   task: any;
@@ -12,9 +16,40 @@ type SubTaskFormProps = {
 
 export const SubTaskForm = ({ task, onCloseCallback }: SubTaskFormProps) => {
   const path = usePathname();
+  // const subtasks = task.subtasks.map(({ id, isCompleted }) => {
+  //   return { id, isCompleted };
+  // });
+  // console.log(subtasks);
+  // const [selectedOption, setSelectedOption] = useState("");
+  const finishedTaskCount = task.subtasks.reduce(
+    (acc, subtask) => (subtask.isCompleted ? (acc += 1) : acc),
+    0
+  );
+  const existingTask = { ...task };
 
   const boardId = path.split("/")[2];
   const board = useAppSelector((state) => selectBoardById(state, boardId));
+  const dispatch = useAppDispatch();
+  function handleGetSelectedOption(e: React.ChangeEvent<HTMLSelectElement>) {
+    const selectedOption = e.target.value;
+    let existingColName = "";
+    board?.columns.forEach((column) => {
+      column.tasks.find(function (task) {
+        if (task.id === existingTask.id) {
+          existingColName = column.name;
+        }
+      });
+    });
+    const data = {
+      existingTask,
+      boardId,
+      selectedOption,
+      existingColName,
+    };
+    dispatch(removeTask(data));
+    dispatch(moveTask(data));
+  }
+
   return (
     <div
       className="absolute top-0 bottom-0 right-0 left-0 bg-[#00000080]"
@@ -30,10 +65,11 @@ export const SubTaskForm = ({ task, onCloseCallback }: SubTaskFormProps) => {
             height={6}
           />
         </div>
-        <p className="text-gray-500 font-medium mb-3">{`Subtasks (0 of ${task.subtasks.length})`}</p>
+        <p>{task.description}</p>
+        <p className="text-gray-500 font-medium mb-3">{`Subtasks (${finishedTaskCount} of ${task.subtasks.length})`}</p>
         <div className="flex flex-col gap-2 w-80 mb-4">
           {task.subtasks.map((subtask: any) => {
-            console.log(subtask);
+            // console.log(subtask);
             return (
               <div className="flex gap-3 items-center" key={subtask.id}>
                 <input type="checkbox" defaultChecked={subtask.isCompleted} />
@@ -48,6 +84,7 @@ export const SubTaskForm = ({ task, onCloseCallback }: SubTaskFormProps) => {
             name="current-status"
             id="current-status"
             className="w-full p-2"
+            onChange={handleGetSelectedOption}
           >
             {board?.columns.map((col) => (
               <option key={col.id} value={col.name}>

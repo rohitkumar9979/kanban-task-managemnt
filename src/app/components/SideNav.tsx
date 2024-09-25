@@ -21,7 +21,7 @@ export const SideNav = () => {
 
   const boardId = path.split("/")[2] || "1";
   const board = useAppSelector((state) => selectBoardById(state, boardId));
-  console.log(board);
+  // console.log(board);
   function handleCreateBoardClick() {
     dispatch(showOverlay());
   }
