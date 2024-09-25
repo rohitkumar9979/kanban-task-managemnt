@@ -2,10 +2,10 @@
 
 import { v4 as uuidv4 } from "uuid";
 
-import React, { useEffect, useReducer, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import { usePathname } from "next/navigation";
-import { addTask } from "../lib/features/taskBoard/boardSlice";
-import { useAppDispatch } from "../lib/hooks";
+import { addTask, selectBoardById } from "../lib/features/taskBoard/boardSlice";
+import { useAppDispatch, useAppSelector } from "../lib/hooks";
 
 export const AddTaskForm = () => {
   const [content, setContent] = useState([
@@ -13,10 +13,13 @@ export const AddTaskForm = () => {
     { id: uuidv4(), content: "e.g. Drink coffee & smile", pending: true },
   ]);
   const subtasksRef = useRef([]);
-  const searchParam = usePathname();
-  const boardId = Number(searchParam.split("").slice(-1));
+  const path = usePathname();
+
+  const boardId = path.split("/")[2];
+  const board = useAppSelector((state) => selectBoardById(state, boardId));
   const dispatch = useAppDispatch();
-  // console.log(boardId);
+
+  const colNames = board?.columns.map((column) => column.name);
 
   function handleAddContent(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -29,31 +32,24 @@ export const AddTaskForm = () => {
   function handleRemoveContent(id: string) {
     setContent(content.filter((c) => c.id !== id));
   }
-  /*
-  {
-    id: 1,
-    name: "Todo",
-    tasks: [
-      {
-        id: 1,
-        title: "Build UI for onboarding flow",
-        descripition: "making kanban task mgmt",
-        subtasks: [
-          {
-            id: 1,
-            name: "sign up",
-            pending: true,
-          },
-        ],
-      }
-    ]
-  }
-    */
+
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
-    const subtaskValues = subtasksRef.current.map((input) => input.value);
-    console.log("Form Submitted:", subtaskValues); // Logs all the subtask values
+
+    console.log(boardId);
+
+    function generateSubTask() {
+      const subtaskValues = subtasksRef.current.map((input) => input.value);
+      const subTasks = subtaskValues.map((sb) => {
+        return {
+          id: uuidv4(),
+          name: sb,
+          isCompleted: false,
+        };
+      });
+      return subTasks;
+    }
     const newTask = {
       boardId,
       moveTo: formData.get("status"),
@@ -61,10 +57,10 @@ export const AddTaskForm = () => {
         id: uuidv4(),
         title: formData.get("title"),
         description: formData.get("description"),
-        subtasks: [...subtaskValues],
+        subtasks: [...generateSubTask()],
       },
     };
-    console.log(newTask);
+    // console.log(newTask);
 
     dispatch(addTask(newTask));
   }
@@ -124,6 +120,7 @@ export const AddTaskForm = () => {
           </div>
           <button
             className="bg-[#6355c7] p-3 rounded-3xl text-white w-full"
+            type="button"
             onClick={handleAddContent}
           >
             + Add New Subtask
@@ -133,9 +130,11 @@ export const AddTaskForm = () => {
           Status
         </label>
         <select name="status" id="status" className="p-3">
-          <option value="Todo">Todo</option>
-          <option value="Doing">Doing</option>
-          <option value="Done">Done</option>
+          {colNames?.map((colname) => (
+            <option key={colname} value={colname}>
+              {colname}
+            </option>
+          ))}
         </select>
         <button className="bg-[#6355c7] p-3 rounded-3xl text-white">
           Create Task

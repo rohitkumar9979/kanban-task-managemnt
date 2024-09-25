@@ -5,7 +5,6 @@ type CardProps = {
   title: string;
   finished: number;
   total: number;
-  taskId: number;
   onShowSubTask: () => void;
 };
 
@@ -13,7 +12,6 @@ export const Card = function ({
   title,
   finished,
   total,
-  taskId,
   onShowSubTask,
 }: CardProps) {
   const searchParam = usePathname();

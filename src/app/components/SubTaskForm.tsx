@@ -1,6 +1,9 @@
 import React from "react";
 import Image from "next/image";
 import { SubTask } from "../lib/types";
+import { usePathname } from "next/navigation";
+import { useAppSelector } from "../lib/hooks";
+import { selectBoardById } from "../lib/features/taskBoard/boardSlice";
 
 type SubTaskFormProps = {
   task: any;
@@ -8,7 +11,10 @@ type SubTaskFormProps = {
 };
 
 export const SubTaskForm = ({ task, onCloseCallback }: SubTaskFormProps) => {
-  console.log(task);
+  const path = usePathname();
+
+  const boardId = path.split("/")[2];
+  const board = useAppSelector((state) => selectBoardById(state, boardId));
   return (
     <div
       className="absolute top-0 bottom-0 right-0 left-0 bg-[#00000080]"
@@ -27,6 +33,7 @@ export const SubTaskForm = ({ task, onCloseCallback }: SubTaskFormProps) => {
         <p className="text-gray-500 font-medium mb-3">{`Subtasks (0 of ${task.subtasks.length})`}</p>
         <div className="flex flex-col gap-2 w-80 mb-4">
           {task.subtasks.map((subtask: any) => {
+            console.log(subtask);
             return (
               <div className="flex gap-3 items-center" key={subtask.id}>
                 <input type="checkbox" defaultChecked={subtask.isCompleted} />
@@ -42,9 +49,11 @@ export const SubTaskForm = ({ task, onCloseCallback }: SubTaskFormProps) => {
             id="current-status"
             className="w-full p-2"
           >
-            <option value="Todo">Todo</option>
-            <option value="Doing">Doing</option>
-            <option value="Done">Done</option>
+            {board?.columns.map((col) => (
+              <option key={col.id} value={col.name}>
+                {col.name}
+              </option>
+            ))}
           </select>
         </div>
       </div>

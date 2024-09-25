@@ -1,24 +1,24 @@
 export interface SubTask {
-  id: number;
+  id: string;
   name: string;
   isCompleted: boolean;
 }
 
 export interface Task {
-  id: number;
+  id: string;
   title: string;
   description: string;
   subtasks: SubTask[];
 }
 
 export interface BoardColumn {
-  id: number;
+  id: string;
   name: string;
   tasks: Task[];
 }
 
 export interface Board {
-  id: number;
+  id: string;
   name: string;
   isActive: boolean;
   columns: BoardColumn[];

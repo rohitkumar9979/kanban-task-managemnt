@@ -1,37 +1,43 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { RootState } from "../../store";
 import { Boards } from "../../types";
+import { v4 as uuidv4 } from "uuid";
 
 const initialState: Boards = {
   boards: [
     {
-      id: 1,
+      id: "1",
       name: "Platform Launch",
       isActive: false,
       columns: [
         {
-          id: 1,
+          id: uuidv4(),
           name: "Todo",
           tasks: [
             {
-              id: 1,
+              id: uuidv4(),
               title: "Build UI for onboarding flow",
               description: "",
               subtasks: [
                 {
-                  id: 1,
+                  id: uuidv4(),
                   name: "sign up",
                   isCompleted: true,
+                },
+                {
+                  id: uuidv4(),
+                  name: "Log in",
+                  isCompleted: false,
                 },
               ],
             },
             {
-              id: 2,
+              id: uuidv4(),
               title: "Build UI for search",
               description: "",
               subtasks: [
                 {
-                  id: 1,
+                  id: uuidv4(),
                   name: "Search page",
                   isCompleted: false,
                 },
@@ -40,16 +46,16 @@ const initialState: Boards = {
           ],
         },
         {
-          id: 2,
+          id: uuidv4(),
           name: "Doing",
           tasks: [
             {
-              id: 3,
+              id: uuidv4(),
               title: "Writing test cases",
               description: "",
               subtasks: [
                 {
-                  id: 1,
+                  id: uuidv4(),
                   name: "sign up",
                   isCompleted: true,
                 },
@@ -58,16 +64,16 @@ const initialState: Boards = {
           ],
         },
         {
-          id: 3,
+          id: uuidv4(),
           name: "Done",
           tasks: [
             {
-              id: 4,
+              id: uuidv4(),
               title: "Debugging add to cart",
               description: "",
               subtasks: [
                 {
-                  id: 1,
+                  id: uuidv4(),
                   name: "sign up",
                   isCompleted: true,
                 },
@@ -80,15 +86,6 @@ const initialState: Boards = {
   ],
 };
 
-// {
-// boardId,
-// id: uuidv4(),
-// title: formData.get("title"),
-// description: formData.get("description"),
-// moveTo: formData.get("status"),
-// subtasks: [...content],
-// }
-
 const boardSlice = createSlice({
   name: "board",
   initialState,
@@ -100,14 +97,19 @@ const boardSlice = createSlice({
         ?.columns.find((column) => column.name === action.payload.moveTo)
         ?.tasks.push(action.payload.task);
     },
+    addBoard(state, action) {
+      state.boards.push(action.payload);
+    },
   },
 });
 
 export default boardSlice.reducer;
 
 export const selectAllBoards = (state: RootState) => state.board.boards;
-export const selectBoardById = (state: RootState, boardId: number) =>
-  state.board.boards.find((board) => board.id === boardId);
+export const selectBoardById = (state: RootState, boardId: string) => {
+  // console.log("Boardid passed to store: ", boardId);
+  return state.board.boards.find((board) => board.id === boardId);
+};
 /*
 export const selectColumnById = (state: RootState,boardId: number, columnId: number) => {
   const board = selectBoardById(state,boardId);
@@ -120,4 +122,4 @@ export const selectSubTasksById = (state: RootState, boardId: number,taskId: num
   return column?.tasks.find(task => task.id === taskId);
 }
 */
-export const { addTask } = boardSlice.actions;
+export const { addTask, addBoard } = boardSlice.actions;
